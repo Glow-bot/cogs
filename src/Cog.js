@@ -97,7 +97,7 @@ const Cog = class extends Collection{
      */
     unload(name){
         const path = this.get(name)?.path || this.#resolve(name).full
-        const module = this.find(a=>a.path===path)
+        var module = this.find(a=>a.path===path)
         if(this.#unloader)module = this.#unloader(module)
         this.delete(module.name)
         delete require.cache[path]

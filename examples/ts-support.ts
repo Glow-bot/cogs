@@ -19,6 +19,11 @@ const events = new Cog("./events")
 		else client.on(module.name, module.execute);
 		return module;
 	})
+	.setUnloader((module)=>{
+		if(module.once)client.removeListener(module.name, () => module.execute(client))
+		else client.removeListener(module.name,module.execute)
+		return module
+	})
 	.loadAll();
 client.events = events;
 
