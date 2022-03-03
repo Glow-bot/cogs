@@ -15,8 +15,9 @@ const commands = new Cog("./commands").loadAll();
 client.commands = commands;
 const events = new Cog("./events")
 	.setLoader((module) => {
-		if (module.once) return client.once(module.name, ()=>module.execute(client));
-		return client.on(module.name, module.execute);
+		if (module.once) client.once(module.name, ()=>module.execute(client));
+		else client.on(module.name, module.execute);
+		return module;
 	})
 	.loadAll();
 client.events = events;
