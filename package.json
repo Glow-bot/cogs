@@ -1,6 +1,6 @@
 {
   "name": "@glowbot/cogs",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A little cog system(Assumed to be used for discord.js command&event managers)",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
