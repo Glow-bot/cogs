@@ -1,0 +1,31 @@
+{
+  "name": "@glowbot/cogs",
+  "version": "0.1.0",
+  "description": "A little cog system(Assumed to be used for discord.js command&event managers)",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "keywords": [
+    "discord",
+    "discord.js",
+    "collection",
+    "map"
+  ],
+  "author": "Googlefan256 (https://glow-bot.com/)",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@discordjs/collection": "^0.5.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/glow-bot/cogs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/glow-bot/cogs/issues"
+  },
+  "files": [
+    "src"
+  ],
+  "devDependencies": {
+    "discord.js": "^13.6.0"
+  }
+}
