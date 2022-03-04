@@ -1,4 +1,4 @@
-const {default:Collection} = require("@discordjs/collection")
+const Collection = require("@discordjs/collection").default
 const {join,resolve,parse} = require("path")
 const {readdirSync} = require("fs")
 
@@ -25,8 +25,8 @@ const Cog = class extends Collection{
      */
     #resolve(pathKey){
         const path = {}
-        path.full = resolve(this.#readpath(this.#main).find(a=>a.endsWith(pathKey)||a.endsWith(pathKey+".js")))
-        if(!path.full.endsWith(".js"))path.full=path.full+".js"
+        path.full = resolve(this.#readpath(this.#main).find(a => a.endsWith(pathKey) || a.endsWith(pathKey + ".js")))
+        if(!path.full.endsWith(".js"))path.full = path.full + ".js"
         path.base = parse(path.full).base.slice(0,-3)
         return path
     }
@@ -38,12 +38,12 @@ const Cog = class extends Collection{
     #readpath(path){
         const dirs = []
         const files = []
-        readdirSync(path,{withFileTypes:true}).map(v=>{
+        readdirSync(path,{withFileTypes:true}).map(v => {
             if(v.isDirectory())dirs.push(join(path,v.name))
             if(v.isFile())files.push(join(path,v.name))
         })
-        dirs.forEach(child=>files.push(...this.#readpath(child)))
-        return files.filter(a=>a.match(/\.(|m|c)js$/))
+        dirs.forEach(child => files.push(...this.#readpath(child)))
+        return files.filter(a => a.match(/\.(|m|c)js$/))
     }
     /**
      * @constructor
@@ -60,6 +60,7 @@ const Cog = class extends Collection{
      * the loader function will be called everytime when a file was added
      */
     setLoader(loader){
+        if(typeof loader !== "function" && loader)throw new TypeError("loader should be nullish or a function")
         this.#loader = loader
         return this
     }
@@ -69,6 +70,7 @@ const Cog = class extends Collection{
      * the unloader function will be called everytime when a file was removed
      */
     setUnloader(unloader){
+        if(typeof unloader !== "function" && unloader)throw new TypeError("unloader should be nullish or a function")
         this.#unloader = unloader
         return this
     }
@@ -84,6 +86,7 @@ const Cog = class extends Collection{
      */
     load(name){
         const path = this.#resolve(name)
+        if(!path.full)return null;
         var module = require(path.full)
         module.name = path.base
         module.path = path.full
@@ -97,7 +100,8 @@ const Cog = class extends Collection{
      */
     unload(name){
         const path = this.get(name)?.path || this.#resolve(name).full
-        var module = this.find(a=>a.path===path)
+        var module = this.find(a=>a.path === path)
+        if(!module)return null;
         if(this.#unloader)module = this.#unloader(module)
         this.delete(module.name)
         delete require.cache[path]
@@ -109,22 +113,23 @@ const Cog = class extends Collection{
      * shortcut for unload() and load()
      */
     reload(name){
-        const {name:_name} = this.unload(name)
-        return this.load(_name)
+        const _module = this.unload(name)
+        if(!_module)return null;
+        return this.load(_module.name)
     }
     /**
      * Load all Cogs
      */
     loadAll(){
         const base = resolve(this.#main)
-        this.#readpath(base).map(v=>this.load(v.slice(base.length)))
+        this.#readpath(base).map(v => this.load(v.slice(base.length)))
         return this
     }
     /**
      * Unload all Cogs
      */
     unloadAll(){
-        this.map(a=>this.unload(a.name))
+        this.map(a => this.unload(a.name))
         return this
     }
     /**
@@ -136,5 +141,6 @@ const Cog = class extends Collection{
         return this.loadAll()
     }
 }
+
 module.exports = Cog
 module.exports.Cog = Cog
